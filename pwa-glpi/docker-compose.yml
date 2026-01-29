@@ -3,6 +3,10 @@ version: "3.7"
 services:
   ticketsign-client:
     image: ghcr.io/${GITHUB_USER}/ticketsign-client:latest # Ajustar con usuario real
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=https://api-ticketsign.jhamf.com
     networks:
       - jhamfstack
     deploy:
@@ -56,6 +60,7 @@ services:
 
 volumes:
   ticketsign_data:
+
 
 networks:
   jhamfstack:

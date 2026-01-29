@@ -24,7 +24,7 @@ router.post('/maintenance', async (req, res) => {
         await fs.writeFile(tempPath, pdfBuffer);
 
         // 0. Guardar en MongoDB
-        import Act from '../models/Act.js';
+        // 0. Guardar en MongoDB
 
         // Buscar si ya existe para actualizar o crear nuevo
         let act = await Act.findOne({ glpi_ticket_id: actData.glpi_ticket_id });
