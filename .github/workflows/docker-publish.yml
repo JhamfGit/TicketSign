@@ -29,13 +29,13 @@ jobs:
       - name: Build and push client image
         uses: docker/build-push-action@v5
         with:
-          context: ./client
+          context: ./pwa-glpi/client
           push: true
           tags: ghcr.io/jhamfgit/ticketsign-client:latest
       
       - name: Build and push server image
         uses: docker/build-push-action@v5
         with:
-          context: ./server
+          context: ./pwa-glpi/server
           push: true
           tags: ghcr.io/jhamfgit/ticketsign-server:latest
