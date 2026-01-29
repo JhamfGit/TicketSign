@@ -1,0 +1,62 @@
+version: "3.7"
+
+services:
+  ticketsign-client:
+    image: ghcr.io/${GITHUB_USER}/ticketsign-client:latest # Ajustar con usuario real
+    networks:
+      - jhamfstack
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ticketsign.rule=Host(`ticketsign.jhamf.com`)
+        - traefik.http.services.ticketsign.loadbalancer.server.port=80
+        - traefik.http.routers.ticketsign.entrypoints=websecure
+        - traefik.http.routers.ticketsign.tls.certresolver=letsencryptresolver
+
+  ticketsign-server:
+    image: ghcr.io/${GITHUB_USER}/ticketsign-server:latest # Ajustar con usuario real
+    networks:
+      - jhamfstack
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/ticketsign
+      - GLPI_API_URL=${GLPI_API_URL}
+      - GLPI_APP_TOKEN=${GLPI_APP_TOKEN}
+      - GLPI_USER_TOKEN=${GLPI_USER_TOKEN}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ticketsign-api.rule=Host(`api-ticketsign.jhamf.com`)
+        - traefik.http.services.ticketsign-api.loadbalancer.server.port=5000
+        - traefik.http.routers.ticketsign-api.entrypoints=websecure
+        - traefik.http.routers.ticketsign-api.tls.certresolver=letsencryptresolver
+
+  mongo:
+    image: mongo:latest
+    networks:
+      - jhamfstack
+    volumes:
+      - ticketsign_data:/data/db
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  ticketsign_data:
+
+networks:
+  jhamfstack:
+    external: true
