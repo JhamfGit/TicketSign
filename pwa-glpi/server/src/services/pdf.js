@@ -6,13 +6,13 @@ export const generateMaintenancePDF = async (actData) => {
   const browser = await puppeteer.launch({
     headless: 'new',
     args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
     ],
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
-});
+  });
   const page = await browser.newPage();
 
   const isPreventive = actData.type === 'PREVENTIVO';
@@ -34,7 +34,7 @@ export const generateMaintenancePDF = async (actData) => {
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
           body { font-family: 'Inter', sans-serif; color: #1e293b; padding: 20px; line-height: 1.1; font-size: 10px; }
           .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; padding-bottom: 8px; margin-bottom: 15px; }
-          .logo-area { display: flex; align-items: center; gap: 8px; }
+          .logo-area { display: flex; align-items: center; gap: 8px; background: #0f172a; padding: 10px; border-radius: 8px; }
           .logo-img { height: 35px; }
           .document-info { text-align: right; padding: 10px 5px; }
           .ticket-badge { background: #eff6ff; color: #1e40af; padding: 6px 18px; border-radius: 99px; font-weight: 700; font-size: 13px; border: 1px solid #bfdbfe; display: inline-block; margin-bottom: 8px; }
@@ -232,13 +232,13 @@ export const generateConsolidatedPDF = async (clientName, acts) => {
   const browser = await puppeteer.launch({
     headless: 'new',
     args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu'
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu'
     ],
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
-});
+  });
   const page = await browser.newPage();
 
   // Obtener la ruta del logo

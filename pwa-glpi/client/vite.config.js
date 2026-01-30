@@ -12,11 +12,30 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
+      includeAssets: ['favicon.ico', 'logo.png'],
       manifest: {
-        name: 'Actas GLPI',
-        short_name: 'GLPI-Actas',
+        name: 'TicketSign by Jhamf',
+        short_name: 'TicketSign',
+        description: 'Gestión de Actas de Mantenimiento Digital',
         theme_color: '#0f172a',
-        icons: []
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: 'favicon.ico',
+            sizes: '64x64 32x32 24x24 16x16',
+            type: 'image/x-icon'
+          },
+          {
+            src: 'logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
       }
     })
   ],
