@@ -3,7 +3,16 @@ import path from 'path';
 import fs from 'fs';
 
 export const generateMaintenancePDF = async (actData) => {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+    ],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
+});
   const page = await browser.newPage();
 
   const isPreventive = actData.type === 'PREVENTIVO';
@@ -220,7 +229,16 @@ export const generateMaintenancePDF = async (actData) => {
 };
 
 export const generateConsolidatedPDF = async (clientName, acts) => {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+    ],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser'
+});
   const page = await browser.newPage();
 
   // Obtener la ruta del logo
