@@ -1,22 +1,30 @@
-# Build Stage
-FROM node:20-alpine as build-stage
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# Instalar git si es necesario
+RUN apk add --no-cache git
 
+# Copiar archivos del proyecto
+COPY package*.json ./
 COPY . .
-ARG VITE_API_URL
+
+# Argumento de build para la API URL
+ARG VITE_API_URL=http://localhost:5000
 ENV VITE_API_URL=$VITE_API_URL
+
+# Instalar dependencias
+RUN npm install --legacy-peer-deps
+
+# Build de la aplicación (Vite usará VITE_API_URL)
 RUN npm run build
 
-# Production Stage
-FROM nginx:alpine as production-stage
+# Instalar serve globalmente
+RUN npm install -g serve
 
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# Exponer puerto
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Servir la aplicación
+CMD ["npx", "serve", "-s", "dist", "-l", "80"]
+
