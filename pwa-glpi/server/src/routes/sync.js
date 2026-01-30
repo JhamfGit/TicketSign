@@ -7,6 +7,21 @@ import Act from '../models/Act.js';
 
 const router = express.Router();
 
+// Nuevo endpoint para obtener historial
+router.get('/maintenance', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 50;
+        const acts = await Act.find()
+            .sort({ createdAt: -1 })
+            .limit(limit);
+
+        res.json(acts);
+    } catch (error) {
+        console.error('Error obteniendo historial:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
 router.post('/maintenance', async (req, res) => {
     const actData = req.body;
 

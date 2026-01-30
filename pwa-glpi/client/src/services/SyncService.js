@@ -41,15 +41,38 @@ export const SyncService = {
     },
 
     /**
+     * Trae cambios del servidor al cliente
+     */
+    async pullRemoteChanges() {
+        if (!navigator.onLine) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/sync/maintenance?limit=50`);
+            if (response.ok) {
+                const remoteActs = await response.json();
+                if (remoteActs && remoteActs.length > 0) {
+                    const { saveRemoteActs } = await import('../store/db');
+                    await saveRemoteActs(remoteActs);
+                    console.log(`Sincronizados ${remoteActs.length} registros del servidor.`);
+                }
+            }
+        } catch (error) {
+            console.error('Error obteniendo datos remotos:', error);
+        }
+    },
+
+    /**
      * Inicia un listener para cambios de conexión
      */
     init() {
         window.addEventListener('online', () => {
             console.log('Conexión restaurada. Intentando sincronizar...');
             this.syncPendingActs();
+            this.pullRemoteChanges();
         });
 
         // También intentar sincronizar al cargar la app
         this.syncPendingActs();
+        this.pullRemoteChanges();
     }
 };

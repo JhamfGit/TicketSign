@@ -65,9 +65,40 @@ export const updateSyncStatus = async (id, status, error = null) => {
 export const getHistory = async () => {
     return await db.acts
         .where('status')
-        .equals('SINCRONIZADO')
+        .anyOf('SINCRONIZADA', 'SINCRONIZADO') // Soportar ambos por compatibilidad
         .reverse()
         .sortBy('createdAt');
+};
+
+/**
+ * Guarda actas provenientes del servidor
+ */
+export const saveRemoteActs = async (acts) => {
+    const operations = acts.map(act => {
+        // Aseguramos que el estado sea consistente localmente
+        const localAct = {
+            ...act,
+            status: 'SINCRONIZADA', // Forzar estado correcto
+            id: undefined // Dejar que IndexedDB maneje los IDs o usar el del server si es consistente
+        };
+
+        // Usamos put para insertar o actualizar basado en glpi_ticket_id si es único,
+        // pero como los IDs locales y remotos pueden diferir, usamos glpi_ticket_id como clave lógica.
+        // Nota: Si el schema no tiene glpi_ticket_id como key secundaria única, esto podría duplicar.
+        // Revisando el schema: '++id, glpi_ticket_id...'
+
+        return db.acts.where('glpi_ticket_id').equals(act.glpi_ticket_id).first()
+            .then(existing => {
+                if (existing) {
+                    // Actualizar solo si es necesario, o ignorar si ya está local
+                    return db.acts.update(existing.id, { ...localAct, id: existing.id });
+                } else {
+                    return db.acts.add(localAct);
+                }
+            });
+    });
+
+    return Promise.all(operations);
 };
 
 /**

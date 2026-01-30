@@ -1,28 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { getHistory } from '../store/db';
 import { Search, Calendar, User, ChevronRight, FileCheck, Filter, Download, History, ChevronLeft } from 'lucide-react';
 
 const HistoryList = ({ onSelectAct, onBack }) => {
-    const [history, setHistory] = useState([]);
-    const [loading, setLoading] = useState(true);
+    // Usamos useLiveQuery para que la lista se actualice automáticamente
+    // cuando SyncService guarde nuevos registros del servidor.
+    const history = useLiveQuery(() => getHistory(), []) || [];
+    const loading = !history; // useLiveQuery retorna undefined inicialmente
+
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('ALL');
 
-    useEffect(() => {
-        loadHistory();
-    }, []);
-
-    const loadHistory = async () => {
-        setLoading(true);
-        try {
-            const data = await getHistory();
-            setHistory(data);
-        } catch (error) {
-            console.error('Error cargando historial:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Eliminamos useEffect y loadHistory ya que useLiveQuery maneja la suscripción
 
     const filteredHistory = history.filter(act => {
         const matchesSearch =
