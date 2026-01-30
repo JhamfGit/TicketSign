@@ -41,4 +41,3 @@ jobs:
           context: ./pwa-glpi/server
           push: true
           tags: ghcr.io/jhamfgit/ticketsign-server:latest
-EOF
